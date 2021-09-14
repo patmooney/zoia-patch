@@ -1,9 +1,11 @@
 const assert = require('assert');
+const fs = require('fs');
 
 describe('Schema', () => {
     it('can parse a schema', async () => {
-        const { fromFile } = require('../index');
-        const patch = await fromFile('./test/data/patch.bin');
+        const { ZoiaPatch } = require('../index');
+        const buffer = fs.readFileSync('./test/data/patch.bin');
+        const patch = new ZoiaPatch(buffer);
         assert.deepEqual(patch.schema, {
             "name": "abcdEfghijklmno",
             "modules": {

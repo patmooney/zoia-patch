@@ -8,10 +8,13 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "mocha": "^9.1.1"
+    "mocha": "^9.1.1",
+    "buffer": "^6.0.3",
+    "browserify": "^17.0.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "browserify for-web.js -o dist/bundle.js"
   },
   "repository": {
     "type": "git",

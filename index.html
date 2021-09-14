@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script src="./dist/bundle.js"></script>
+    </head>
+    <body>
+        <form>
+            <input type="file" name="patchFile" id="patchFile" />
+        </form>
+        <pre id="container"></pre>
+        <script>
+            document.querySelector('#patchFile').addEventListener('change', () => {
+                const fileInput = document.forms[0].patchFile;
+                const fileName = fileInput.value;
+                if (fileInput.files) {
+                    const reader = new FileReader();
+                    reader.readAsArrayBuffer(fileInput.files[0]);
+                    reader.onload = function (evt) {
+                        const patch = new ZoiaPatch(Buffer.Buffer.from(evt.target.result));
+                        document.querySelector('#container').innerHTML = JSON.stringify(patch.schema, null, 2);
+                    };
+                    reader.onerror = function () {
+                        document.querySelector('#container').innerHTML = reader.error;
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
+

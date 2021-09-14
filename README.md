@@ -3,8 +3,11 @@
 Node module for parsing Zoia patches
 
 ```
-const { fromFile } = require('zoia-patch');
-const patch = await fromFile('./my-patch.bin');
+const { ZoiaPatch } = require('zoia-patch');
+const fs = require('fs');
+
+const buffer = fs.readFileSync('./my-patch.bin');
+const patch = new ZoiaPatch(buffer);
 console.log(patch.schema);
 
 {
@@ -52,6 +55,9 @@ console.log(patch.schema);
   }
 }
 ```
+
+### For Web
+ - See ./index.html for an example of usage
 
 ### TODO
  - Add module specific meta to taxonomy (names of options/parameters etc)
