@@ -1,3 +1,5 @@
+const patchTaxonomy = require('../taxonomy/patch.json');
+
 const BYTE_STRIDE = 4;
 
 class ZoiaPatch {
@@ -83,117 +85,11 @@ class ZoiaPatch {
         }
         return { data, count: numberOfPages, offsetEnd: offset + 1 + (numberOfPages * 4) };
     }
-    getType(t) {
-        return {
-            0: 'SV Filter',
-            1: 'Audio Input',
-            2: 'Audio Out',
-            3: 'Aliaser',
-            4: 'Sequencer',
-            5: 'LFO',
-            6: 'ADSR',
-            7: 'VCA',
-            8: 'Audio Multiply',
-            9: 'Bit Crusher',
-            10: 'Sample and Hold',
-            11: 'OD & DistorLon',
-            12: 'Env Follower',
-            13: 'Delay line',
-            14: 'Oscillator',
-            15: 'Pushbutton',
-            16: 'Keyboard',
-            17: 'CV Invert',
-            18: 'Steps',
-            19: 'Slew Limiter',
-            20: 'MIDI Notes in',
-            21: 'MIDI CC in',
-            22: 'MulLplier',
-            23: 'Compressor',
-            24: 'MulL-filter',
-            25: 'Plate Reverb',
-            26: 'Buffer delay',
-            27: 'All-pass filter',
-            28: 'Quantizer',
-            29: 'Phaser',
-            30: 'Looper',
-            31: 'In Switch',
-            32: 'Out Switch',
-            33: 'Audio In Switch',
-            34: 'Audio Out Switch',
-            35: 'Midi pressure',
-            36: 'Onset Detector',
-            37: 'Rhythm',
-            38: 'Noise',
-            39: 'Random',
-            40: 'Gate',
-            41: 'Tremolo',
-            42: 'Tone Control',
-            43: 'Delay w/Mod',
-            44: 'Stompswitch',
-            45: 'Value',
-            46: 'CV Delay',
-            47: 'CV Loop',
-            48: 'CV Filter',
-            49: 'Clock Divider',
-            50: 'Comparator',
-            51: 'CV Rectify',
-            52: 'Trigger',
-            53: 'Stereo Spread',
-            54: 'Cport Exp/CV in',
-            55: 'Cport CV out',
-            56: 'UI Button',
-            57: 'Audio Panner',
-            58: 'Pitch Detector',
-            59: 'Pitch Shieer',
-            60: 'Midi Note out',
-            61: 'Midi CC out',
-            62: 'Midi PC out',
-            63: 'Bit Modulator',
-            64: 'Audio Balance',
-            65: 'Inverter',
-            66: 'Fuzz',
-            67: 'Ghostverb',
-            68: 'Cabinet Sim',
-            69: 'Flanger',
-            70: 'Chorus',
-            71: 'Vibrato',
-            72: 'Env Filter',
-            73: 'Ring Modulator',
-            74: 'Hall Reverb',
-            75: 'Ping Pong Delay',
-            76: 'Audio Mixer',
-            77: 'CV Flip Flop',
-            78: 'Diffuser',
-            79: 'Reverb Lite',
-            80: 'Room Reverb',
-            81: 'Pixel',
-            82: 'Midi Clock In',
-            83: 'Granular',
-            84: 'Midi Clock Out',
-            85: 'Tap to CV',
-            86: 'MIDI Pitch Bend In',
-            104: 'CV Mixer'
-        }[t];
+    getType(typeId) {
+        return patchTaxonomy.moduleTypes[`${typeId}`];
     }
-    getColour(c) {
-        return {
-            0: '?',
-            1: 'Blue',
-            2: 'Green',
-            3: 'Red',
-            4: 'Yellow',
-            5: 'Aqua',
-            6: 'Magenta',
-            7: 'White',
-            8: 'Orange',
-            9: 'Lime',
-            10: 'Surf',
-            11: 'Sky',
-            12: 'Purple',
-            13: 'Pink',
-            14: 'Peach',
-            15: 'Mango',
-        }[c];
+    getColour(colourId) {
+        return patchTaxonomy.moduleColours[`${colourId}`];
     }
 }
 
