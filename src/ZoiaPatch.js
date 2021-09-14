@@ -2,10 +2,23 @@ const patchTaxonomy = require('../taxonomy/patch.json');
 
 const BYTE_STRIDE = 4;
 
+/**
+ * Parses the binary patch files for zoia and returns the structure as an object
+ * Used https://github.com/meanmedianmoge/zoia_lib/blob/master/documentation/Binary%20Format.pdf as inspiration
+ *
+ * @example
+ *   const buffer = fs.readFileSync('./my-patch.bin');
+ *   const patch = new ZoiaPatch(buffer);
+ *   const structure = patch.schema;
+ */
 class ZoiaPatch {
     constructor(data) {
         this.buffer = data;
         this._schema = null;
+    }
+
+    get schema() {
+        return this.getSchema();
     }
     buildSchema() {
         const moduleData = this.getModuleData();
@@ -24,9 +37,6 @@ class ZoiaPatch {
             this._schema = this.buildSchema();
         }
         return this._schema;
-    }
-    get schema() {
-        return this.getSchema();
     }
     getModuleData() {
         const buff = this.buffer;
