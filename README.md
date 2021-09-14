@@ -57,6 +57,7 @@ console.log(patch.schema);
 ```
 
 ### For Web
+ - `npm run build`
  - See ./index.html for an example of usage
 
 ### TODO
