@@ -1,5 +1,5 @@
 const fs = require('fs');
-const ZoiaPatch = require('./ZoiaPatch');
+const ZoiaPatch = require('./src/ZoiaPatch');
 const { promisify } = require('util');
 const readFile = promisify(fs.readFile);
 

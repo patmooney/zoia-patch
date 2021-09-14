@@ -1,0 +1,29 @@
+{
+  "name": "zoia-patch",
+  "version": "0.0.1",
+  "description": "For parsing Zoia patches",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^9.1.1"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/patmooney/zoia-patch.git"
+  },
+  "keywords": [
+    "zoia"
+  ],
+  "author": "patmooney",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/patmooney/zoia-patch/issues"
+  },
+  "homepage": "https://github.com/patmooney/zoia-patch#readme"
+}
