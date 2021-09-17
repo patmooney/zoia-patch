@@ -2,6 +2,8 @@
 
 Node module for parsing Zoia patches
 
+![zoia-09-2021](https://user-images.githubusercontent.com/1128374/133830967-20e4d179-7a20-458a-a00e-597b2695a4c1.png)
+
 ```
 const { ZoiaPatch } = require('zoia-patch');
 const fs = require('fs');
