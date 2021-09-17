@@ -2,30 +2,159 @@
     <head>
         <script src="./dist/bundle.js"></script>
         <style>
+            body {
+                font-family: Arial;
+            }
+            #graph {
+                display: inline-block;
+                border: solid 1px #555;
+                border-radius: 5px;
+                background-color: #555;
+            }
+            #screen {
+                height: 150px;
+                background-color: black;
+                width: 200px;
+                margin: 10px;
+                vertical-align: middle;
+                color: white;
+            }
+            #left-cont {
+                display: inline-block;
+            }
+            #graph > table {
+                vertical-align: top;
+                border-spacing: 10px;
+                border-collapse: separate;
+                display: inline-table;
+            }
             #graph > table td {
-                width: 20px;
-                height: 20px;
-                border: solid 1px black;
+                width: 40px;
+                height: 40px;
+                border: solid 1px #444;
+                margin: 10px;
+                background-color: #CCC;
+                border-radius: 5px;
+            }
+            #error {
+                color: red;
+                font-weight: bold;
+            }
+            #meta-info {
+                display: none;
+                text-align: left;
+            }
+            #meta-toggle {
+                cursor: pointer;
+                font-weight: bold;
+                font-size: .7rem;
+            }
+            input {
+                background-color: lightblue;
+                padding: 20px;
+            }
+            #container {
+                width: 710px;
+                margin: 20px auto;
+                text-align: center;
+            }
+            #patch-storage {
+                text-align: left;
+                border: solid 1px grey;
+                margin: 20px;
+                max-height: 400px;
+                overflow: auto;
+            }
+            #patch-storage > p {
+                cursor: pointer;
+                padding: 10px;
+                margin: 0px;
+            }
+            #patch-storage > p:hover {
+                background-color: lightgrey;
+            }
+            #screen > p {
                 margin: 5px;
+                text-align: center;
+            }
+            #screen > p#patch-page {
+                margin-bottom: 10px;
+                display: inline-block;
+            }
+            #screen > p#patch-name {
+                display: inline-block;
+            }
+            #page-buttons > div {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                background-color: red;
+                color: white;
+                line-height: 35px;
+                cursor: pointer;
             }
         </style>
     </head>
     <body>
-        <h1>Choose a zoia patch file, see the contents</h1>
-        <form>
-            <input type="file" name="patchFile" id="patchFile" />
-        </form>
-        <div id="graph">
-            <table>
-                <tr><td id="b0"></td><td id="b1"></td><td id="b2"></td><td id="b3"></td><td id="b4"></td><td id="b5"></td><td id="b6"></td><td id="b7"></td></tr>
-                <tr><td id="b8"></td><td id="b9"></td><td id="b10"></td><td id="b11"></td><td id="b12"></td><td id="b13"></td><td id="b14"></td><td id="b15"></td></tr>
-                <tr><td id="b16"></td><td id="b17"></td><td id="b18"></td><td id="b19"></td><td id="b20"></td><td id="b21"></td><td id="b22"></td><td id="b23"></td></tr>
-                <tr><td id="b24"></td><td id="b25"></td><td id="b26"></td><td id="b27"></td><td id="b28"></td><td id="b29"></td><td id="b30"></td><td id="b31"></td></tr>
-                <tr><td id="b32"></td><td id="b33"></td><td id="b34"></td><td id="b35"></td><td id="b36"></td><td id="b37"></td><td id="b38"></td><td id="b39"></td></tr>
-            </table>
+        <div id="container">
+            <h1>Choose a zoia patch file, see the contents</h1>
+            <form>
+                <input type="file" name="patchFile" id="patchFile" />
+                <p id="error"></p>
+            </form>
+            <div id="graph">
+                <div id="left-cont">
+                    <div id="screen">
+                        <p id="patch-name"></p>
+                        <p id="patch-page"></p>
+                        <hr></hr>
+                        <p id="button-name"></p>
+                    </div>
+                    <div id="page-buttons">
+                        <div id="prev-page">&lt;</div>
+                        <div id="next-page">&gt;</div>
+                    </div>
+                </div>
+                <table>
+                    <tr><td id="b0"></td><td id="b1"></td><td id="b2"></td><td id="b3"></td><td id="b4"></td><td id="b5"></td><td id="b6"></td><td id="b7"></td></tr>
+                    <tr><td id="b8"></td><td id="b9"></td><td id="b10"></td><td id="b11"></td><td id="b12"></td><td id="b13"></td><td id="b14"></td><td id="b15"></td></tr>
+                    <tr><td id="b16"></td><td id="b17"></td><td id="b18"></td><td id="b19"></td><td id="b20"></td><td id="b21"></td><td id="b22"></td><td id="b23"></td></tr>
+                    <tr><td id="b24"></td><td id="b25"></td><td id="b26"></td><td id="b27"></td><td id="b28"></td><td id="b29"></td><td id="b30"></td><td id="b31"></td></tr>
+                    <tr><td id="b32"></td><td id="b33"></td><td id="b34"></td><td id="b35"></td><td id="b36"></td><td id="b37"></td><td id="b38"></td><td id="b39"></td></tr>
+                </table>
+            </div>
+            <h3>Load previous patch</h3>
+            <div id="patch-storage"></div>
+            <p id="meta-toggle">Display Meta (toggle)</p>
+            <pre id="meta-info"></pre>
         </div>
-        <pre id="container"></pre>
         <script>
+            var zoiaPatch = null;
+            var page = 0;
+            document.querySelector('#next-page').addEventListener('click', () => {
+                page++;
+                if (page === 64) {
+                    page = 0;
+                }
+                plotSchema(zoiaPatch.schema);
+            });
+            document.querySelector('#prev-page').addEventListener('click', () => {
+                page--;
+                if (page === -1) {
+                    page = 63;
+                }
+                plotSchema(zoiaPatch.schema);
+            });
+
+            loadInventory();
+            document.querySelector('#meta-toggle').addEventListener('click', () => {
+                const pre = document.querySelector('#meta-info');
+                if (pre.style.display === 'block') {
+                    pre.style.display = 'none';
+                } else {
+                    pre.style.display = 'block';
+                }
+            });
             document.querySelector('#patchFile').addEventListener('change', () => {
                 const fileInput = document.forms[0].patchFile;
                 const fileName = fileInput.value;
@@ -33,25 +162,79 @@
                     const reader = new FileReader();
                     reader.readAsArrayBuffer(fileInput.files[0]);
                     reader.onload = function (evt) {
-                        const patch = new ZoiaPatch(Buffer.Buffer.from(evt.target.result));
-                        document.querySelector('#container').innerHTML = JSON.stringify(patch.schema, null, 2);
-                        plotSchema(patch.schema);
+                        document.querySelector('#error').innerText = '';
+                        const buf = Buffer.Buffer.from(evt.target.result);
+                        const patch = loadFromBuffer(buf);
+                        toStorage(patch.schema, buf.toString('base64'));
+                        loadInventory();
                     };
                     reader.onerror = function () {
-                        document.querySelector('#container').innerHTML = reader.error;
+                        document.querySelector('#meta-info').innerHTML = reader.error;
                     }
                 }
             });
+            function loadFromBuffer(buf) {
+                page = 0;
+                zoiaPatch = null;
+                try {
+                    const patch = new ZoiaPatch(buf);
+                    window.zoiaPatch = patch;
+                    document.querySelector('#meta-info').innerHTML = JSON.stringify(patch.schema, null, 2);
+                    plotSchema(patch.schema);
+                    return patch;
+                } catch (err) {
+                    document.querySelector('#error').innerText = err;
+                }
+            }
             function plotSchema(schema) {
                 document.querySelectorAll('td').forEach(el => el.style.backgroundColor = '');
-                schema.modules.data.filter(mod => mod.pageNumber === 0).forEach(
+                const screen = document.querySelector('#screen');
+                const [patchNameField, patchPageField, _1, buttonField] = screen.children;
+                patchNameField.innerText = schema.name;
+                patchPageField.innerText = `[p. ${page}]`;
+                schema.modules.data.filter(mod => mod.meta.pageNumber === page).forEach(
                     mod => {
-                        let size = [1, 2].includes(mod.type) ? 1 : 2;
-                        size += mod.params.length;
-                        const pos = mod.gridPosition;
+                        let size = mod.display.buttons.length;
+                        const pos = mod.meta.gridPosition;
                         for (let i = pos; i < Math.min(pos+size, 39); i++) {
-                            document.querySelector(`#b${i}`).style.backgroundColor = mod.colourName.toLowerCase();
+                            document.querySelector(`#b${i}`).style.backgroundColor = mod.meta.colourName.toLowerCase();
+                            document.querySelector(`#b${i}`).addEventListener('mouseover', () =>
+                                buttonField.innerHTML = `<strong>${mod.display.niceName}</strong><br />${mod.display.buttons[i - pos].label}`
+                            );
+                            document.querySelector(`#b${i}`).addEventListener('mouseout', () =>
+                                buttonField.innerHTML = ``
+                            );
                         }
+                    }
+                );
+            }
+            function toStorage(schema, b64) {
+                const existing = JSON.parse(window.localStorage.getItem('inventory') || '[]');
+                const unknowns = existing.filter(item => /^UNNAMED PATCH \[\d+\]/.test(item));
+                const max = Math.max(0, ...unknowns.map(unknown => parseInt(unknown.match(/\d+/)[0])));
+                const name = schema.name || `UNNAMED PATCH [${max}]`;
+                if (existing.includes(name)) {
+                    return;
+                }
+                existing.push(name);
+                window.localStorage.setItem(`patch-${btoa(name)}`, b64);
+                window.localStorage.setItem('inventory', JSON.stringify(existing));
+            }
+            function loadPatchFromStorage(name) {
+                const key = `patch-${btoa(name)}`;
+                const binary = Buffer.Buffer.from(window.localStorage.getItem(key), 'base64');
+                loadFromBuffer(binary);
+            }
+            function loadInventory() {
+                const existing = JSON.parse(window.localStorage.getItem('inventory') || '[]');
+                const container = document.querySelector('#patch-storage');
+                container.innerHTML = '';
+                existing.forEach(
+                    name => {
+                        const p = document.createElement('p');
+                        p.innerText = name;
+                        p.addEventListener('click', () => loadPatchFromStorage(name));
+                        container.appendChild(p);
                     }
                 );
             }

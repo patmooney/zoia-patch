@@ -266,8 +266,8 @@ module.exports = {
             ...(cvOutput ? [buttons[1]] : [])
         ])
     },
-    push_button: {
-        niceName: 'push button',
+    pushbutton: {
+        niceName: 'pushbutton',
         options: [
             { label: 'action', values: [{ label: 'momentary', value: 0 }, { label: 'latching', value: 1 }] },
             { label: 'normally', value: [{ label: 'zero', value: 0 }, { label: 'one', value: 1 }] }

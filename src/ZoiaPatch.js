@@ -34,13 +34,19 @@ class ZoiaPatch {
     }
     getSchema() {
         if (!this._schema) {
-            this._schema = this.buildSchema();
+            try {
+                this._schema = this.buildSchema();
+            } catch (err) {
+                console.error(err);
+                throw new Error('Invalid patch file');
+            }
         }
         return this._schema;
     }
     getModuleData() {
         const buff = this.buffer;
-        const numberOfModules = getNumberAt(buff, 5);
+        // Protect against random files giving horrendous numbers
+        const numberOfModules = Math.min(getNumberAt(buff, 5), 250);
         let currentOff = 6;
         const modBuffs = [];
         for (let i = 0; i < numberOfModules; i++) {
@@ -107,12 +113,18 @@ class ZoiaPatch {
     buildModDisplay(meta) {
         const module = modules[meta.typeName.toLowerCase().replace(/\s/g, '_')];
         if (!module) {
-            return {};
+            return { niceName: meta.typeName || meta.type, buttons: [{ label: 'UNKNOWN MODULE' }] };
         }
+        const display = {
+            niceName: module.niceName
+        };
         if (!module.buttonLogic) {
-            return module.buttons;
+            return { ...display, buttons: module.buttons };
         }
-        return module.buttonLogic(module, meta.options);
+        return {
+            ...display,
+            buttons: module.buttonLogic(module, meta.options)
+        };
     }
 }
 
