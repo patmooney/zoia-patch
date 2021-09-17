@@ -1,5 +1,5 @@
 const patchTaxonomy = require('../taxonomy/patch.json');
-
+const modules = require('./modules');
 const BYTE_STRIDE = 4;
 
 /**
@@ -50,20 +50,23 @@ class ZoiaPatch {
         const parseModule = (subBuff) => {
             const getNum = (n) => getNumberAt(subBuff, n);
             const mod = {
-                len: getNum(0),
-                type: getNum(1),
-                typeName: this.getType(getNum(1)),
-                unknown: getNum(2),
-                pageNumber: getNum(3),
-                colour: getNum(4),
-                colourName: this.getColour(getNum(4)),
-                gridPosition: getNum(5),
-                numberOfParams: getNum(6),
-                modVersion: getNum(7),
-                options: getBufferAt(subBuff, 8, 2).toString('hex').match(/.{2}/g).map(h => parseInt(h, 16)),
-                params: (new Array(getNum(6)).fill(null).map((_, i) => getNum(10 + i))),
-                name: getStringAt(subBuff, 10+getNum(6), 4)
+                meta: {
+                    len: getNum(0),
+                    type: getNum(1),
+                    typeName: this.getType(getNum(1)),
+                    unknown: getNum(2),
+                    pageNumber: getNum(3),
+                    colour: getNum(4),
+                    colourName: this.getColour(getNum(4)),
+                    gridPosition: getNum(5),
+                    numberOfParams: getNum(6),
+                    modVersion: getNum(7),
+                    options: getBufferAt(subBuff, 8, 2).toString('hex').match(/.{2}/g).map(h => parseInt(h, 16)),
+                    params: (new Array(getNum(6)).fill(null).map((_, i) => getNum(10 + i))),
+                    name: getStringAt(subBuff, 10+getNum(6), 4)
+                }
             };
+            mod.display = this.buildModDisplay(mod.meta);
             return mod;
         };
         return { data: modBuffs.map(parseModule), count: numberOfModules, offsetEnd: currentOff };
@@ -100,6 +103,16 @@ class ZoiaPatch {
     }
     getColour(colourId) {
         return patchTaxonomy.moduleColours[`${colourId}`];
+    }
+    buildModDisplay(meta) {
+        const module = modules[meta.typeName.toLowerCase().replace(/\s/g, '_')];
+        if (!module) {
+            return {};
+        }
+        if (!module.buttonLogic) {
+            return module.buttons;
+        }
+        return module.buttonLogic(module, meta.options);
     }
 }
 
