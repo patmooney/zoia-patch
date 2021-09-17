@@ -138,7 +138,7 @@ const getNumberAt = (buff, n, len = 1) => parseInt(
 
 // remove null chars
 const getStringAt = (buff, n, len = 1) =>
-    buff.slice(n * BYTE_STRIDE, (n * BYTE_STRIDE) + (len * BYTE_STRIDE)).toString().replace(/[^\x00-\x7F]/g, '').replace(/\0/g, '');
+    buff.slice(n * BYTE_STRIDE, (n * BYTE_STRIDE) + (len * BYTE_STRIDE)).toString().replace(/[^a-zA-Z0-9\s\-\_]/g, "");
 
 const getBufferAt = (buff, n, len = 1) =>
     buff.slice(n * BYTE_STRIDE, (n * BYTE_STRIDE) + (len * BYTE_STRIDE));

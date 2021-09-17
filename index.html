@@ -187,6 +187,7 @@
                 }
             }
             function plotSchema(schema) {
+                resetButtons();
                 document.querySelectorAll('td').forEach(el => el.style.backgroundColor = '');
                 const screen = document.querySelector('#screen');
                 const [patchNameField, patchPageField, _1, buttonField] = screen.children;
@@ -197,7 +198,7 @@
                         let size = mod.display.buttons.length;
                         const pos = mod.meta.gridPosition;
                         for (let i = pos; i < Math.min(pos+size, 39); i++) {
-                            const moduleLabel = `<strong>${mod.display.niceName}</strong><br /><small>(${mod.meta.name})</small><br />`;
+                            const moduleLabel = `<strong>${mod.display.niceName}</strong><br />` + (mod.meta.name ? `<small>(${mod.meta.name})</small><br />` : '');
                             document.querySelector(`#b${i}`).style.backgroundColor = mod.meta.colourName.toLowerCase();
                             document.querySelector(`#b${i}`).addEventListener('mouseover', () =>
                                 buttonField.innerHTML = `${moduleLabel}<br />${mod.display.buttons[i - pos].label}`
@@ -207,6 +208,11 @@
                             );
                         }
                     }
+                );
+            }
+            function resetButtons() {
+                document.querySelectorAll("#graph table td").forEach(
+                    el => el.parentNode.replaceChild(el.cloneNode(true), el)
                 );
             }
             function toStorage(schema, b64) {
