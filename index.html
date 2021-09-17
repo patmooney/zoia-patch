@@ -197,9 +197,10 @@
                         let size = mod.display.buttons.length;
                         const pos = mod.meta.gridPosition;
                         for (let i = pos; i < Math.min(pos+size, 39); i++) {
+                            const moduleLabel = `<strong>${mod.display.niceName}</strong><br /><small>(${mod.meta.name})</small><br />`;
                             document.querySelector(`#b${i}`).style.backgroundColor = mod.meta.colourName.toLowerCase();
                             document.querySelector(`#b${i}`).addEventListener('mouseover', () =>
-                                buttonField.innerHTML = `<strong>${mod.display.niceName}</strong><br />${mod.display.buttons[i - pos].label}`
+                                buttonField.innerHTML = `${moduleLabel}<br />${mod.display.buttons[i - pos].label}`
                             );
                             document.querySelector(`#b${i}`).addEventListener('mouseout', () =>
                                 buttonField.innerHTML = ``
